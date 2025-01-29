@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+        }
+        input, button {
+            display: block;
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        .item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Inventory Tracker</h2>
+    <input type="text" id="name" placeholder="Item Name">
+    <input type="text" id="description" placeholder="Item Description">
+    <input type="number" id="price" placeholder="Price">
+    <button onclick="addItem()">Add Item</button>
+
+    <h3>Inventory List</h3>
+    <div id="inventory"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadInventory);
+
+        function addItem() {
+            let name = document.getElementById("name").value;
+            let description = document.getElementById("description").value;
+            let price = document.getElementById("price").value;
+
+            if (!name || !price) {
+                alert("Please enter a name and price.");
+                return;
+            }
+
+            let item = { name, description, price };
+            let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+            inventory.push(item);
+            localStorage.setItem("inventory", JSON.stringify(inventory));
+
+            displayInventory();
+        }
+
+        function displayInventory() {
+            let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+            let inventoryDiv = document.getElementById("inventory");
+            inventoryDiv.innerHTML = "";
+
+            inventory.forEach((item, index) => {
+                let itemDiv = document.createElement("div");
+                itemDiv.classList.add("item");
+                itemDiv.innerHTML = `
+                    <strong>${item.name}</strong> - $${item.price} <br>
+                    ${item.description} <br>
+                    <button onclick="removeItem(${index})">Remove</button>
+                `;
+                inventoryDiv.appendChild(itemDiv);
+            });
+        }
+
+        function removeItem(index) {
+            let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+            inventory.splice(index, 1);
+            localStorage.setItem("inventory", JSON.stringify(inventory));
+            displayInventory();
+        }
+
+        function loadInventory() {
+            displayInventory();
+        }
+    </script>
+</body>
+</html>
